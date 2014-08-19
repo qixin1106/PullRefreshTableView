@@ -8,7 +8,7 @@
 
 #import "PullRefreshView.h"
 
-#define OFFSETHEIGHT 64
+#define OFFSETHEIGHT 50
 
 #define PULLDOWN @"下拉刷新?"
 #define RELEASE @"释放加载!"
@@ -77,13 +77,13 @@
     [super setFrame:frame];
     if (self.pullType == PullType_Header)
     {
-        self.titleLabel.frame = CGRectMake(140, frame.size.height-20, 100, 20);
-        self.aiView.frame = CGRectMake(130, frame.size.height-10, 0, 0);
+        self.titleLabel.frame = CGRectMake(120, frame.size.height-20, 100, 20);
+        self.aiView.frame = CGRectMake(120, frame.size.height-10, 0, 0);
     }
     else
     {
-        self.titleLabel.frame = CGRectMake(140, 10, 100, 20);
-        self.aiView.frame = CGRectMake(130, 20, 0, 0);
+        self.titleLabel.frame = CGRectMake(120, 10, 100, 20);
+        self.aiView.frame = CGRectMake(120, 20, 0, 0);
     }
 }
 
@@ -93,36 +93,39 @@
     //TODO: 下拉刷新
     if (self.pullType==PullType_Header)
     {
-        if (newPoint.y<0)
+        if (oldPoint.y<0)
         {
-            self.frame = CGRectMake(0, newPoint.y, 320, -newPoint.y);
+            self.frame = CGRectMake(0, oldPoint.y, self.scrollView.bounds.size.width, -oldPoint.y);
         }
         if (!self.isLoading)
         {
-            //在可请求得距离松手
-            if (newPoint.y<-OFFSETHEIGHT && !self.scrollView.tracking)
+            if (oldPoint.y<-OFFSETHEIGHT)
             {
-                [self.aiView startAnimating];
-                self.isLoading = YES;
-                self.titleLabel.text = LOADING;
-                if (self.delegate && [self.delegate respondsToSelector:@selector(didBeginLoadData:)])
+                //在可请求得距离松手
+                if (!self.scrollView.tracking)
                 {
-                    [self.delegate didBeginLoadData:self];
-                }
-                [UIView animateWithDuration:0.25f animations:^{
-                    if (self.pullType==PullType_Header)
+                    [self.aiView startAnimating];
+                    self.isLoading = YES;
+                    self.titleLabel.text = LOADING;
+                    if (self.delegate && [self.delegate respondsToSelector:@selector(didBeginLoadData:)])
                     {
-                        self.scrollView.contentInset = UIEdgeInsetsMake(OFFSETHEIGHT,
-                                                                       self.scrollView.contentInset.left,
-                                                                       self.scrollView.contentInset.bottom,
-                                                                       self.scrollView.contentInset.right);
+                        [self.delegate didBeginLoadData:self];
                     }
-                }];
-            }
-            //在可请求得距离,未松手
-            else if (newPoint.y<-OFFSETHEIGHT && self.scrollView.tracking)
-            {
-                self.titleLabel.text = RELEASE;
+                    [UIView animateWithDuration:0.25f animations:^{
+                        if (self.pullType==PullType_Header)
+                        {
+                            self.scrollView.contentInset = UIEdgeInsetsMake(OFFSETHEIGHT,
+                                                                            self.scrollView.contentInset.left,
+                                                                            self.scrollView.contentInset.bottom,
+                                                                            self.scrollView.contentInset.right);
+                        }
+                    }];
+                }
+                //在可请求得距离,未松手
+                else
+                {
+                    self.titleLabel.text = RELEASE;
+                }
             }
             //距离完全不够
             else
@@ -130,7 +133,7 @@
                 self.titleLabel.text = PULLDOWN;
             }
         }
-        if (self.isLoading)
+        else
         {
             self.titleLabel.text = LOADING;
         }
@@ -139,17 +142,17 @@
     //TODO: 上拉加载
     if (self.pullType==PullType_Footer)
     {
-        if (newPoint.y>self.scrollView.contentSize.height-self.scrollView.bounds.size.height)
+        if (oldPoint.y>self.scrollView.contentSize.height-self.scrollView.bounds.size.height)
         {
             self.frame = CGRectMake(0,
                                     self.scrollView.contentSize.height,
-                                    320,
-                                    newPoint.y+self.scrollView.bounds.size.height-self.scrollView.contentSize.height);
+                                    self.scrollView.bounds.size.width,
+                                    oldPoint.y+self.scrollView.bounds.size.height-self.scrollView.contentSize.height);
         }
         if (!self.isLoading)
         {
             //在可请求得距离松手
-            if (newPoint.y+self.scrollView.bounds.size.height>self.scrollView.contentSize.height+OFFSETHEIGHT &&
+            if (oldPoint.y+self.scrollView.bounds.size.height>self.scrollView.contentSize.height+OFFSETHEIGHT &&
                 !self.scrollView.tracking)
             {
                 [self.aiView startAnimating];
@@ -170,7 +173,7 @@
                 }];
             }
             //在可请求得距离,未松手
-            else if (newPoint.y+self.scrollView.bounds.size.height>self.scrollView.contentSize.height+OFFSETHEIGHT &&
+            else if (oldPoint.y+self.scrollView.bounds.size.height>self.scrollView.contentSize.height+OFFSETHEIGHT &&
                      self.scrollView.tracking)
             {
                 self.titleLabel.text = RELEASE;
@@ -181,7 +184,7 @@
                 self.titleLabel.text = PULLUP;
             }
         }
-        if (self.isLoading)
+        else
         {
             self.titleLabel.text = LOADING;
         }
@@ -214,6 +217,8 @@
     });
 }
 
+
+
 #pragma mark - KVO
 - (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
@@ -231,7 +236,7 @@
         {
             self.frame = CGRectMake(0,
                                     self.scrollView.contentSize.height,
-                                    320,
+                                    self.scrollView.bounds.size.width,
                                     self.frame.size.height);
         }
     }

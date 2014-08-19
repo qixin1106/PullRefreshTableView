@@ -23,24 +23,47 @@ PullRefreshViewDelegate>
 
 @implementation ViewController
 
+#pragma mark - 模拟加载数据
 - (void)loadData
 {
-    row = 0;
-    [self.dataArray removeAllObjects];
-    for (int i = 0; i < 20; i++)
-    {
-        row++;
-        [self.dataArray addObject:[NSString stringWithFormat:@"标题%d %f",row,CFAbsoluteTimeGetCurrent()]];
-    }
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        @autoreleasepool
+        {
+            sleep(2.0f);
+            row = 0;
+            [self.dataArray removeAllObjects];
+            for (int i = 0; i < 20; i++)
+            {
+                row++;
+                [self.dataArray addObject:[NSString stringWithFormat:@"标题%d %f",row,CFAbsoluteTimeGetCurrent()]];
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+                [self.tableView pullDownFinish];
+            });
+        }
+    });
+
 }
 
+#pragma mark - 模拟加载数据
 - (void)addData
 {
-    for (int i = 0; i < 20; i++)
-    {
-        row++;
-        [self.dataArray addObject:[NSString stringWithFormat:@"标题%d %f",row,CFAbsoluteTimeGetCurrent()]];
-    }
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        @autoreleasepool
+        {
+            sleep(1.0f);
+            for (int i = 0; i < 20; i++)
+            {
+                row++;
+                [self.dataArray addObject:[NSString stringWithFormat:@"标题%d %f",row,CFAbsoluteTimeGetCurrent()]];
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+                [self.tableView pullUpFinish];
+            });
+        }
+    });
 }
 
 
@@ -49,7 +72,9 @@ PullRefreshViewDelegate>
     [super viewDidLoad];
     self.dataArray = [NSMutableArray array];
     [self loadData];
-    
+
+
+    //初始化TableView
     self.tableView = [[RefreshTableView alloc] initWithFrame:self.view.bounds
                                                        style:UITableViewStylePlain
                                              isPullDownValid:YES
@@ -67,32 +92,12 @@ PullRefreshViewDelegate>
     //模拟刷新数据
     if (pullRefreshView.pullType==PullType_Header)
     {
-        dispatch_async(dispatch_get_global_queue(0, 0), ^{
-            @autoreleasepool
-            {
-                sleep(2.0f);
-                [self loadData];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.tableView reloadData];
-                    [self.tableView pullDownFinish];
-                });
-            }
-        });
+        [self loadData];
     }
     //模拟刷新数据
     if (pullRefreshView.pullType==PullType_Footer)
     {
-        dispatch_async(dispatch_get_global_queue(0, 0), ^{
-            @autoreleasepool
-            {
-                sleep(2.0f);
-                [self addData];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.tableView reloadData];
-                    [self.tableView pullUpFinish];
-                });
-            }
-        });
+        [self addData];
     }
 }
 
