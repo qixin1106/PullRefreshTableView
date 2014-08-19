@@ -24,6 +24,7 @@
 		D274E68219A19F9C00174D9A /* RefreshTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = D274E68119A19F9C00174D9A /* RefreshTableView.m */; };
 		D274E68519A19FEB00174D9A /* PullRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = D274E68419A19FEB00174D9A /* PullRefreshView.m */; };
 		D282731D19A306790050FF24 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D282731C19A306790050FF24 /* QuartzCore.framework */; };
+		D282731F19A3522C0050FF24 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = D282731E19A3522C0050FF24 /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +63,7 @@
 		D274E68319A19FEB00174D9A /* PullRefreshView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PullRefreshView.h; sourceTree = "<group>"; };
 		D274E68419A19FEB00174D9A /* PullRefreshView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PullRefreshView.m; sourceTree = "<group>"; };
 		D282731C19A306790050FF24 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		D282731E19A3522C0050FF24 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +94,7 @@
 		D274E63D19A19F2C00174D9A = {
 			isa = PBXGroup;
 			children = (
+				D282731E19A3522C0050FF24 /* README.md */,
 				D274E64F19A19F2C00174D9A /* RefreshTableView */,
 				D274E66E19A19F2C00174D9A /* RefreshTableViewTests */,
 				D274E64819A19F2C00174D9A /* Frameworks */,
@@ -254,6 +257,7 @@
 			files = (
 				D274E66219A19F2C00174D9A /* Images.xcassets in Resources */,
 				D274E65419A19F2C00174D9A /* InfoPlist.strings in Resources */,
+				D282731F19A3522C0050FF24 /* README.md in Resources */,
 				D274E65D19A19F2C00174D9A /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
