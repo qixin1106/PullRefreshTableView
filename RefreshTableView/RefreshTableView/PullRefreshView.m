@@ -8,7 +8,7 @@
 
 #import "PullRefreshView.h"
 
-#define OFFSETHEIGHT 50
+#define OFFSETHEIGHT 64
 
 #define PULLDOWN @"下拉刷新?"
 #define RELEASE @"释放加载!"
@@ -77,8 +77,8 @@
     [super setFrame:frame];
     if (self.pullType == PullType_Header)
     {
-        self.titleLabel.frame = CGRectMake(120, frame.size.height-20, 100, 20);
-        self.aiView.frame = CGRectMake(120, frame.size.height-10, 0, 0);
+        self.titleLabel.frame = CGRectMake(120, frame.size.height-25, 100, 20);
+        self.aiView.frame = CGRectMake(120, frame.size.height-15, 0, 0);
     }
     else
     {
