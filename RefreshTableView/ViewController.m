@@ -74,8 +74,17 @@ PullRefreshViewDelegate>
     [self loadData];
 
 
+    UIView *nav = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 64)];
+    nav.backgroundColor = [UIColor colorWithRed:151/255.0 green:51/255.0 blue:51/255.0 alpha:1];
+    [self.view addSubview:nav];
+
+    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(120, 20, 100, 44)];
+    titleLabel.textAlignment = NSTextAlignmentCenter;
+    titleLabel.text = @"Home Page";
+    [nav addSubview:titleLabel];
+
     //初始化TableView
-    self.tableView = [[RefreshTableView alloc] initWithFrame:self.view.bounds
+    self.tableView = [[RefreshTableView alloc] initWithFrame:CGRectMake(0, 64, 320, self.view.bounds.size.height-64)
                                                        style:UITableViewStylePlain
                                              isPullDownValid:YES
                                                isPullUpValid:YES];
