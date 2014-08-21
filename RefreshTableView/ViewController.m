@@ -8,7 +8,6 @@
 
 #import "ViewController.h"
 #import "RefreshTableView.h"
-#import "PullRefreshView.h"
 
 
 
@@ -85,6 +84,7 @@ PullRefreshViewDelegate>
     titleLabel.text = @"Home Page";
     [nav addSubview:titleLabel];
 
+#warning 1.初始化RefreshTableView
     //初始化TableView
     self.tableView = [[RefreshTableView alloc] initWithFrame:CGRectMake(0, 64, 320, screenHeight-64)
                                                        style:UITableViewStylePlain
@@ -98,6 +98,7 @@ PullRefreshViewDelegate>
 
 
 #pragma mark - 开始加载
+#warning 2.实现PullRefreshView的Delegate
 - (void)didBeginLoadData:(PullRefreshView*)pullRefreshView
 {
     //模拟刷新数据

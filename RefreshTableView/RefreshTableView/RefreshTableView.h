@@ -20,8 +20,8 @@
  */
 
 #import <UIKit/UIKit.h>
+#import "PullRefreshView.h"
 
-@class PullRefreshView;
 @interface RefreshTableView : UITableView
 @property (strong, nonatomic) PullRefreshView *pullDownView;
 @property (strong, nonatomic) PullRefreshView *pullUpView;

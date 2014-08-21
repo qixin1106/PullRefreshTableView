@@ -7,7 +7,6 @@
 //
 
 #import "RefreshTableView.h"
-#import "PullRefreshView.h"
 
 @interface RefreshTableView ()
 @property (assign, nonatomic) BOOL isPullDownValid;
