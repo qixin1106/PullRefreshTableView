@@ -61,6 +61,8 @@ typedef enum
 }PullType;
 
 
+
+
 @protocol PullRefreshViewDelegate;
 @interface PullRefreshView : UIView
 @property (weak, nonatomic) id<PullRefreshViewDelegate>delegate;

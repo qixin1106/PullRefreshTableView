@@ -29,7 +29,7 @@ PullRefreshViewDelegate>
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         @autoreleasepool
         {
-            sleep(2.0f);
+            sleep(arc4random()%3+1);
             row = 0;
             [self.dataArray removeAllObjects];
             for (int i = 0; i < 20; i++)

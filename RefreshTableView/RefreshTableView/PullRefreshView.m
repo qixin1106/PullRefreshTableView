@@ -7,23 +7,144 @@
 //  GM
 
 #import "PullRefreshView.h"
+#import <QuartzCore/QuartzCore.h>
 
-#define OFFSETHEIGHT 64
+#define OFFSETHEIGHT 65
+#define FLIP_ANIMATION_DURATION 0.25
 
-#define PULLDOWN @"下拉刷新?"
-#define RELEASE @"释放加载!"
-#define LOADING @"加载中..."
-#define PULLUP @"上拉加载?"
+#define PULLDOWN @"下拉马上刷新"
+#define DOWNRELEASE @"释放立马刷新"
+#define DOWNLOADING @"正在刷新..."
+
+#define PULLUP @"上拉马上加载"
+#define UPRELEASE @"释放立马加载"
+#define UPLOADING @"正在加载..."
+
+#define LAST_REFRESH_DATE @"kPullRefreshLastHeaderDateTime"
+
+
+typedef enum {
+    State_Normal=0,
+    State_PreRefesh=1,
+    State_Shake=2
+}State;
 
 @interface PullRefreshView ()
 //base
 @property (weak, nonatomic) UIScrollView *scrollView;
 //UI,可自定义
+@property (strong, nonatomic) UIView *layoutView;//放布局的
 @property (strong, nonatomic) UILabel *titleLabel;//标题
+@property (strong, nonatomic) UILabel *refreshLabel;//刷新时间
 @property (strong, nonatomic) UIActivityIndicatorView *aiView;//菊花
+@property (strong, nonatomic) UIImageView *horse;//小马
+@property (assign, nonatomic) State state;
 @end
 
 @implementation PullRefreshView
+
+
+- (void)setState:(State)state
+{
+    if (_state!=state)
+    {
+        _state=state;
+        switch (_state)
+        {
+            case State_Normal:
+            {
+                NSLog(@"normalAnimation");
+                [self.horse.layer removeAllAnimations];
+
+                [UIView animateWithDuration:FLIP_ANIMATION_DURATION animations:^{
+                    self.horse.transform = CGAffineTransformMakeRotation(0);
+                }];
+//                [CATransaction begin];
+//                [CATransaction setAnimationDuration:FLIP_ANIMATION_DURATION];
+//                self.horse.layer.transform = CATransform3DIdentity;
+//                [CATransaction commit];
+                break;
+            }
+            case State_PreRefesh:
+            {
+                NSLog(@"preAnimation");
+                [self.horse.layer removeAllAnimations];
+                [UIView animateWithDuration:FLIP_ANIMATION_DURATION animations:^{
+                    self.horse.transform = CGAffineTransformMakeRotation((M_PI / 180.0) * 30.0f);
+                }];
+                break;
+            }
+            case State_Shake:
+            {
+                NSLog(@"shakeAnimation");
+                [self.horse.layer removeAllAnimations];
+                self.horse.layer.transform = CATransform3DIdentity;
+
+//                [CATransaction begin];
+//                self.horse.layer.transform = CATransform3DIdentity;
+//                [CATransaction commit];
+
+                CABasicAnimation*animation=[CABasicAnimation animationWithKeyPath:@"transform"];
+                animation.duration = 0.5f;
+                animation.repeatCount = MAXFLOAT;
+                animation.autoreverses = YES;
+                animation.removedOnCompletion = YES;
+                animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+                animation.fromValue = [NSValue valueWithCATransform3D:CATransform3DRotate(self.horse.layer.transform, (M_PI / 180.0) * 30.0f, 0.0, 0.0, 1)];
+                animation.toValue = [NSValue valueWithCATransform3D:CATransform3DRotate(self.horse.layer.transform, (M_PI / 180.0) * -30.0f, 0.0, 0.0, 1)];
+                [self.horse.layer addAnimation:animation forKey:@"wiggle"];
+                break;
+            }
+            default:
+                break;
+        }
+    }
+}
+
+
+- (void)headerLayout
+{
+    self.titleLabel = [[UILabel alloc] init];
+    self.titleLabel.frame = CGRectMake(130, 15, 100, 20);
+    self.titleLabel.textColor = [UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1.0];
+    self.titleLabel.font = [UIFont boldSystemFontOfSize:13.0f];
+    self.titleLabel.backgroundColor = [UIColor clearColor];
+    self.titleLabel.opaque = YES;
+    [self.layoutView addSubview:self.titleLabel];
+
+
+    self.refreshLabel = [[UILabel alloc] init];
+    self.refreshLabel.text = [[NSUserDefaults standardUserDefaults] objectForKey:LAST_REFRESH_DATE];
+    self.refreshLabel.frame = CGRectMake(130, 35, 100, 20);
+    self.refreshLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    self.refreshLabel.font = [UIFont systemFontOfSize:12.0f];
+    self.refreshLabel.textColor = [UIColor colorWithRed:102/255.0 green:102/255.0 blue:102/255.0 alpha:1.0];
+    self.refreshLabel.backgroundColor = [UIColor clearColor];
+    [self.layoutView addSubview:self.refreshLabel];
+
+
+    self.horse = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_xiaoma.png"]];
+    self.horse.layer.anchorPoint = CGPointMake(0.5, 0.9);
+    self.horse.frame = CGRectMake(80, 22, 36, 27);
+    [self.layoutView addSubview:self.horse];
+}
+
+- (void)footerLayout
+{
+    self.titleLabel = [[UILabel alloc] init];
+    self.titleLabel.frame = CGRectMake(130, 15, 100, 20);
+    self.titleLabel.textColor = [UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1.0];
+    self.titleLabel.font = [UIFont boldSystemFontOfSize:13.0f];
+    self.titleLabel.backgroundColor = [UIColor clearColor];
+    self.titleLabel.opaque = YES;
+    [self.layoutView addSubview:self.titleLabel];
+
+    self.aiView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    self.aiView.frame = CGRectMake(110, 25, 0, 0);
+    self.aiView.hidesWhenStopped = YES;
+    [self.layoutView addSubview:self.aiView];
+}
+
 
 - (id)initWithPullType:(PullType)pullType
 {
@@ -37,17 +158,20 @@
         self.isLoading = NO;
 
         //TODO: 自定义UI布局
-        self.titleLabel = [[UILabel alloc] init];
-        self.titleLabel.textColor = [UIColor darkGrayColor];
-        self.titleLabel.textAlignment = NSTextAlignmentCenter;
-        self.titleLabel.font = [UIFont systemFontOfSize:14.0f];
-        self.titleLabel.backgroundColor = [UIColor clearColor];
-        self.titleLabel.opaque = YES;
-        [self addSubview:self.titleLabel];
+        self.layoutView = [[UIView alloc] init];
+        self.layoutView.backgroundColor = [UIColor clearColor];
+        [self addSubview:self.layoutView];
 
-        self.aiView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-        self.aiView.hidesWhenStopped = YES;
-        [self addSubview:self.aiView];
+
+        if (self.pullType==PullType_Header)
+        {
+            [self headerLayout];
+        }
+        if (self.pullType==PullType_Footer)
+        {
+            [self footerLayout];
+        }
+
     }
     return self;
 }
@@ -77,13 +201,11 @@
     [super setFrame:frame];
     if (self.pullType == PullType_Header)
     {
-        self.titleLabel.frame = CGRectMake(120, frame.size.height-25, 100, 20);
-        self.aiView.frame = CGRectMake(120, frame.size.height-15, 0, 0);
+        self.layoutView.frame = CGRectMake(0, frame.size.height-OFFSETHEIGHT, frame.size.width, OFFSETHEIGHT);
     }
     else
     {
-        self.titleLabel.frame = CGRectMake(120, 10, 100, 20);
-        self.aiView.frame = CGRectMake(120, 20, 0, 0);
+        self.layoutView.frame = CGRectMake(0, 0, frame.size.width, OFFSETHEIGHT);
     }
 }
 
@@ -106,12 +228,15 @@
                 {
                     [self.aiView startAnimating];
                     self.isLoading = YES;
-                    self.titleLabel.text = LOADING;
+                    self.titleLabel.text = DOWNLOADING;
                     if (self.delegate && [self.delegate respondsToSelector:@selector(didBeginLoadData:)])
                     {
+                        //???: 只有下拉刷新才有时间
+                        [self changeLastRefreshDateTime];
                         [self.delegate didBeginLoadData:self];
                     }
-                    [UIView animateWithDuration:0.25f animations:^{
+                    
+                    [UIView animateWithDuration:0.15f animations:^{
                         if (self.pullType==PullType_Header)
                         {
                             self.scrollView.contentInset = UIEdgeInsetsMake(OFFSETHEIGHT,
@@ -120,22 +245,28 @@
                                                                             self.scrollView.contentInset.right);
                         }
                     }];
+                    //TODO: 小马动画晃动
+                    self.state = State_Shake;
                 }
                 //在可请求得距离,未松手
                 else
                 {
-                    self.titleLabel.text = RELEASE;
+                    self.titleLabel.text = DOWNRELEASE;
+                    //TODO: 小马动画准备
+                    self.state = State_PreRefesh;
                 }
             }
             //距离完全不够
             else
             {
                 self.titleLabel.text = PULLDOWN;
+                //TODO: 小马动画复位
+                self.state = State_Normal;
             }
         }
         else
         {
-            self.titleLabel.text = LOADING;
+            self.titleLabel.text = DOWNLOADING;
         }
     }
 
@@ -157,12 +288,12 @@
             {
                 [self.aiView startAnimating];
                 self.isLoading = YES;
-                self.titleLabel.text = LOADING;
+                self.titleLabel.text = UPLOADING;
                 if (self.delegate && [self.delegate respondsToSelector:@selector(didBeginLoadData:)])
                 {
                     [self.delegate didBeginLoadData:self];
                 }
-                [UIView animateWithDuration:0.25f animations:^{
+                [UIView animateWithDuration:0.15f animations:^{
                     if (self.pullType==PullType_Footer)
                     {
                         self.scrollView.contentInset = UIEdgeInsetsMake(self.scrollView.contentInset.top,
@@ -176,7 +307,7 @@
             else if (oldPoint.y+self.scrollView.bounds.size.height>self.scrollView.contentSize.height+OFFSETHEIGHT &&
                      self.scrollView.tracking)
             {
-                self.titleLabel.text = RELEASE;
+                self.titleLabel.text = UPRELEASE;
             }
             //距离完全不够
             else
@@ -186,7 +317,7 @@
         }
         else
         {
-            self.titleLabel.text = LOADING;
+            self.titleLabel.text = UPLOADING;
         }
     }
 }
@@ -196,6 +327,9 @@
 - (void)didLoadFinish
 {
     dispatch_async(dispatch_get_main_queue(), ^{
+        //TODO: 小马动画复位
+        self.state = State_Normal;
+
         [self.aiView stopAnimating];
         self.isLoading = NO;
         [UIView animateWithDuration:0.25f animations:^{
@@ -248,6 +382,26 @@
                               context:context];
     }
 }
+
+
+
+
+
+
+#pragma mark - 获得时间
+- (void)changeLastRefreshDateTime
+{
+    NSDate *creationDate = [NSDate date];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"MM-dd HH:mm"];
+    NSString *currentDateStr = [NSString stringWithFormat:@"上次刷新:%@",[dateFormatter stringFromDate:creationDate]];
+    [[NSUserDefaults standardUserDefaults] setObject:currentDateStr forKey:LAST_REFRESH_DATE];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    self.refreshLabel.text = currentDateStr;
+}
+
+
+
 
 
 
