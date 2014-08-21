@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D25043E319A58A2F005C0996 /* icon_xiaoma.png in Resources */ = {isa = PBXBuildFile; fileRef = D25043E119A58A2F005C0996 /* icon_xiaoma.png */; };
+		D25043E419A58A2F005C0996 /* icon_xiaoma@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D25043E219A58A2F005C0996 /* icon_xiaoma@2x.png */; };
 		D274E64A19A19F2C00174D9A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D274E64919A19F2C00174D9A /* Foundation.framework */; };
 		D274E64C19A19F2C00174D9A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D274E64B19A19F2C00174D9A /* CoreGraphics.framework */; };
 		D274E64E19A19F2C00174D9A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D274E64D19A19F2C00174D9A /* UIKit.framework */; };
@@ -38,6 +40,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D25043E119A58A2F005C0996 /* icon_xiaoma.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_xiaoma.png; sourceTree = "<group>"; };
+		D25043E219A58A2F005C0996 /* icon_xiaoma@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_xiaoma@2x.png"; sourceTree = "<group>"; };
 		D274E64619A19F2C00174D9A /* RefreshTableView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RefreshTableView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D274E64919A19F2C00174D9A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D274E64B19A19F2C00174D9A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -171,6 +175,8 @@
 		D274E67F19A19F6C00174D9A /* RefreshTableView */ = {
 			isa = PBXGroup;
 			children = (
+				D25043E119A58A2F005C0996 /* icon_xiaoma.png */,
+				D25043E219A58A2F005C0996 /* icon_xiaoma@2x.png */,
 				D274E68019A19F9C00174D9A /* RefreshTableView.h */,
 				D274E68119A19F9C00174D9A /* RefreshTableView.m */,
 				D274E68319A19FEB00174D9A /* PullRefreshView.h */,
@@ -255,7 +261,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D25043E419A58A2F005C0996 /* icon_xiaoma@2x.png in Resources */,
 				D274E66219A19F2C00174D9A /* Images.xcassets in Resources */,
+				D25043E319A58A2F005C0996 /* icon_xiaoma.png in Resources */,
 				D274E65419A19F2C00174D9A /* InfoPlist.strings in Resources */,
 				D282731F19A3522C0050FF24 /* README.md in Resources */,
 				D274E65D19A19F2C00174D9A /* Main.storyboard in Resources */,
