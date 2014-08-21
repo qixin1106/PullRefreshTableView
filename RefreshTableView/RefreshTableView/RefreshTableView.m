@@ -10,12 +10,9 @@
 #import "PullRefreshView.h"
 
 @interface RefreshTableView ()
-@property (strong, nonatomic) PullRefreshView *pullDonwView;
-@property (strong, nonatomic) PullRefreshView *pullUpView;
 @property (assign, nonatomic) BOOL isPullDownValid;
 @property (assign, nonatomic) BOOL isPullUpValid;
 @end
-
 
 @implementation RefreshTableView
 
@@ -32,8 +29,8 @@
         //下拉
         if (self.isPullDownValid)
         {
-            self.pullDonwView = [[PullRefreshView alloc] initWithPullType:PullType_Header];
-            [self.pullDonwView showInScrollView:self];
+            self.pullDownView = [[PullRefreshView alloc] initWithPullType:PullType_Header];
+            [self.pullDownView showInScrollView:self];
         }
 
         //上拉
@@ -53,7 +50,7 @@
     [super setDelegate:delegate];
     if (self.isPullDownValid)
     {
-        self.pullDonwView.delegate = (id<PullRefreshViewDelegate>)delegate;
+        self.pullDownView.delegate = (id<PullRefreshViewDelegate>)delegate;
     }
     if (self.isPullUpValid)
     {
@@ -66,7 +63,7 @@
     [super setDataSource:dataSource];
     if (self.isPullDownValid)
     {
-        self.pullDonwView.delegate = (id<PullRefreshViewDelegate>)dataSource;
+        self.pullDownView.delegate = (id<PullRefreshViewDelegate>)dataSource;
     }
     if (self.isPullUpValid)
     {
@@ -74,13 +71,5 @@
     }
 }
 
-- (void)pullDownFinish
-{
-    [self.pullDonwView didLoadFinish];
-}
-- (void)pullUpFinish
-{
-    [self.pullUpView didLoadFinish];
-}
 
 @end

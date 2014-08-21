@@ -39,7 +39,7 @@ PullRefreshViewDelegate>
             }
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self.tableView reloadData];
-                [self.tableView pullDownFinish];
+                [self.tableView.pullDownView didLoadFinish];
             });
         }
     });
@@ -52,7 +52,7 @@ PullRefreshViewDelegate>
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         @autoreleasepool
         {
-            sleep(1.0f);
+            sleep(arc4random()%3+1);
             for (int i = 0; i < 20; i++)
             {
                 row++;
@@ -60,7 +60,7 @@ PullRefreshViewDelegate>
             }
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self.tableView reloadData];
-                [self.tableView pullUpFinish];
+                [self.tableView.pullUpView didLoadFinish];
             });
         }
     });

@@ -44,108 +44,7 @@ typedef enum {
 @implementation PullRefreshView
 
 
-- (void)setState:(State)state
-{
-    if (_state!=state)
-    {
-        _state=state;
-        switch (_state)
-        {
-            case State_Normal:
-            {
-                NSLog(@"normalAnimation");
-                [self.horse.layer removeAllAnimations];
-
-                [UIView animateWithDuration:FLIP_ANIMATION_DURATION animations:^{
-                    self.horse.transform = CGAffineTransformMakeRotation(0);
-                }];
-//                [CATransaction begin];
-//                [CATransaction setAnimationDuration:FLIP_ANIMATION_DURATION];
-//                self.horse.layer.transform = CATransform3DIdentity;
-//                [CATransaction commit];
-                break;
-            }
-            case State_PreRefesh:
-            {
-                NSLog(@"preAnimation");
-                [self.horse.layer removeAllAnimations];
-                [UIView animateWithDuration:FLIP_ANIMATION_DURATION animations:^{
-                    self.horse.transform = CGAffineTransformMakeRotation((M_PI / 180.0) * 30.0f);
-                }];
-                break;
-            }
-            case State_Shake:
-            {
-                NSLog(@"shakeAnimation");
-                [self.horse.layer removeAllAnimations];
-                self.horse.layer.transform = CATransform3DIdentity;
-
-//                [CATransaction begin];
-//                self.horse.layer.transform = CATransform3DIdentity;
-//                [CATransaction commit];
-
-                CABasicAnimation*animation=[CABasicAnimation animationWithKeyPath:@"transform"];
-                animation.duration = 0.5f;
-                animation.repeatCount = MAXFLOAT;
-                animation.autoreverses = YES;
-                animation.removedOnCompletion = YES;
-                animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-                animation.fromValue = [NSValue valueWithCATransform3D:CATransform3DRotate(self.horse.layer.transform, (M_PI / 180.0) * 30.0f, 0.0, 0.0, 1)];
-                animation.toValue = [NSValue valueWithCATransform3D:CATransform3DRotate(self.horse.layer.transform, (M_PI / 180.0) * -30.0f, 0.0, 0.0, 1)];
-                [self.horse.layer addAnimation:animation forKey:@"wiggle"];
-                break;
-            }
-            default:
-                break;
-        }
-    }
-}
-
-
-- (void)headerLayout
-{
-    self.titleLabel = [[UILabel alloc] init];
-    self.titleLabel.frame = CGRectMake(130, 15, 100, 20);
-    self.titleLabel.textColor = [UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1.0];
-    self.titleLabel.font = [UIFont boldSystemFontOfSize:13.0f];
-    self.titleLabel.backgroundColor = [UIColor clearColor];
-    self.titleLabel.opaque = YES;
-    [self.layoutView addSubview:self.titleLabel];
-
-
-    self.refreshLabel = [[UILabel alloc] init];
-    self.refreshLabel.text = [[NSUserDefaults standardUserDefaults] objectForKey:LAST_REFRESH_DATE];
-    self.refreshLabel.frame = CGRectMake(130, 35, 100, 20);
-    self.refreshLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    self.refreshLabel.font = [UIFont systemFontOfSize:12.0f];
-    self.refreshLabel.textColor = [UIColor colorWithRed:102/255.0 green:102/255.0 blue:102/255.0 alpha:1.0];
-    self.refreshLabel.backgroundColor = [UIColor clearColor];
-    [self.layoutView addSubview:self.refreshLabel];
-
-
-    self.horse = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_xiaoma.png"]];
-    self.horse.layer.anchorPoint = CGPointMake(0.5, 0.9);
-    self.horse.frame = CGRectMake(80, 22, 36, 27);
-    [self.layoutView addSubview:self.horse];
-}
-
-- (void)footerLayout
-{
-    self.titleLabel = [[UILabel alloc] init];
-    self.titleLabel.frame = CGRectMake(130, 15, 100, 20);
-    self.titleLabel.textColor = [UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1.0];
-    self.titleLabel.font = [UIFont boldSystemFontOfSize:13.0f];
-    self.titleLabel.backgroundColor = [UIColor clearColor];
-    self.titleLabel.opaque = YES;
-    [self.layoutView addSubview:self.titleLabel];
-
-    self.aiView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    self.aiView.frame = CGRectMake(110, 25, 0, 0);
-    self.aiView.hidesWhenStopped = YES;
-    [self.layoutView addSubview:self.aiView];
-}
-
-
+#pragma mark - 初始化
 - (id)initWithPullType:(PullType)pullType
 {
     self = [super init];
@@ -208,6 +107,7 @@ typedef enum {
         self.layoutView.frame = CGRectMake(0, 0, frame.size.width, OFFSETHEIGHT);
     }
 }
+
 
 #pragma mark - Change Offset
 - (void)changeOffset:(CGPoint)newPoint oldPoint:(CGPoint)oldPoint
@@ -401,6 +301,97 @@ typedef enum {
 }
 
 
+
+
+#pragma mark - 自定义UI及动画
+- (void)setState:(State)state
+{
+    if (_state!=state)
+    {
+        _state=state;
+        switch (_state)
+        {
+            case State_Normal:
+            {
+                [self.horse.layer removeAllAnimations];
+                [UIView animateWithDuration:FLIP_ANIMATION_DURATION animations:^{
+                    self.horse.transform = CGAffineTransformMakeRotation(0);
+                }];
+                break;
+            }
+            case State_PreRefesh:
+            {
+                [self.horse.layer removeAllAnimations];
+                [UIView animateWithDuration:FLIP_ANIMATION_DURATION animations:^{
+                    self.horse.transform = CGAffineTransformMakeRotation((M_PI / 180.0) * 30.0f);
+                }];
+                break;
+            }
+            case State_Shake:
+            {
+                [self.horse.layer removeAllAnimations];
+                self.horse.layer.transform = CATransform3DIdentity;
+
+                CABasicAnimation*animation=[CABasicAnimation animationWithKeyPath:@"transform"];
+                animation.duration = 0.5f;
+                animation.repeatCount = MAXFLOAT;
+                animation.autoreverses = YES;
+                animation.removedOnCompletion = YES;
+                animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+                animation.fromValue = [NSValue valueWithCATransform3D:CATransform3DRotate(self.horse.layer.transform, (M_PI / 180.0) * 30.0f, 0.0, 0.0, 1)];
+                animation.toValue = [NSValue valueWithCATransform3D:CATransform3DRotate(self.horse.layer.transform, (M_PI / 180.0) * -30.0f, 0.0, 0.0, 1)];
+                [self.horse.layer addAnimation:animation forKey:@"wiggle"];
+                break;
+            }
+            default:
+                break;
+        }
+    }
+}
+
+
+- (void)headerLayout
+{
+    self.titleLabel = [[UILabel alloc] init];
+    self.titleLabel.frame = CGRectMake(130, 15, 100, 20);
+    self.titleLabel.textColor = [UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1.0];
+    self.titleLabel.font = [UIFont boldSystemFontOfSize:13.0f];
+    self.titleLabel.backgroundColor = [UIColor clearColor];
+    self.titleLabel.opaque = YES;
+    [self.layoutView addSubview:self.titleLabel];
+
+
+    self.refreshLabel = [[UILabel alloc] init];
+    self.refreshLabel.text = [[NSUserDefaults standardUserDefaults] objectForKey:LAST_REFRESH_DATE];
+    self.refreshLabel.frame = CGRectMake(130, 35, 100, 20);
+    self.refreshLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    self.refreshLabel.font = [UIFont systemFontOfSize:12.0f];
+    self.refreshLabel.textColor = [UIColor colorWithRed:102/255.0 green:102/255.0 blue:102/255.0 alpha:1.0];
+    self.refreshLabel.backgroundColor = [UIColor clearColor];
+    [self.layoutView addSubview:self.refreshLabel];
+
+
+    self.horse = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_xiaoma.png"]];
+    self.horse.layer.anchorPoint = CGPointMake(0.5, 0.9);
+    self.horse.frame = CGRectMake(80, 22, 36, 27);
+    [self.layoutView addSubview:self.horse];
+}
+
+- (void)footerLayout
+{
+    self.titleLabel = [[UILabel alloc] init];
+    self.titleLabel.frame = CGRectMake(130, 15, 100, 20);
+    self.titleLabel.textColor = [UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1.0];
+    self.titleLabel.font = [UIFont boldSystemFontOfSize:13.0f];
+    self.titleLabel.backgroundColor = [UIColor clearColor];
+    self.titleLabel.opaque = YES;
+    [self.layoutView addSubview:self.titleLabel];
+
+    self.aiView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    self.aiView.frame = CGRectMake(110, 25, 0, 0);
+    self.aiView.hidesWhenStopped = YES;
+    [self.layoutView addSubview:self.aiView];
+}
 
 
 

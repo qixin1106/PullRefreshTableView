@@ -10,10 +10,11 @@
 
 @class PullRefreshView;
 @interface RefreshTableView : UITableView
+@property (strong, nonatomic) PullRefreshView *pullDownView;
+@property (strong, nonatomic) PullRefreshView *pullUpView;
+
 - (id)initWithFrame:(CGRect)frame
               style:(UITableViewStyle)style
     isPullDownValid:(BOOL)isPullDownValid
       isPullUpValid:(BOOL)isPullUpValid;
-- (void)pullDownFinish;//下拉加载完成
-- (void)pullUpFinish;//上拉加载完成
 @end
