@@ -1,6 +1,9 @@
 PullRefreshTableView
 ===================
 
+更多情况是使用PullRefreshView类,这样比较灵活
+------------------
+
 
 演示效果:
 
