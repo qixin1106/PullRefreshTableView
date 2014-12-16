@@ -2,18 +2,20 @@
 //  PullDownRefreshView.m
 //  RefreshTableView
 //
-//  Created by gm-iMac-iOS-03 on 14-8-18.
+//  Created by Qixin on 14-8-18.
 //  Copyright (c) 2014年 Qixin. All rights reserved.
 //
 
 #import "PullRefreshView.h"
 
-#define OFFSETHEIGHT 64
+#define OFFSETHEIGHT 80
+#define LOADINGHEIGHT 49
 
 #define PULLDOWN @"下拉刷新?"
 #define RELEASE @"释放加载!"
 #define LOADING @"加载中..."
 #define PULLUP @"上拉加载?"
+
 
 @interface PullRefreshView ()
 //base
@@ -25,6 +27,43 @@
 
 @implementation PullRefreshView
 
+- (void)normalTitle:(NSString*)normalTitle
+      willLoadTitle:(NSString*)willLoadTitle
+       loadingTitle:(NSString*)loadingTitle
+{
+    self.normalTitle = normalTitle;
+    self.willLoadTitle = willLoadTitle;
+    self.loadingTitle = loadingTitle;
+}
+
+- (void)finishDataHandle
+{
+    [self.scrollView removeObserver:self forKeyPath:@"contentOffset"];
+    [self.scrollView removeObserver:self forKeyPath:@"contentSize"];
+    [self.aiView stopAnimating];
+    self.hidden = YES;
+}
+
+- (void)startDataHandle
+{
+    self.hidden = NO;
+    [self.scrollView addObserver:self
+                      forKeyPath:@"contentOffset"
+                         options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld
+                         context:NULL];
+    [self.scrollView addObserver:self
+                      forKeyPath:@"contentSize"
+                         options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld
+                         context:NULL];
+}
+
+
+- (void)dealloc
+{
+    [self.scrollView removeObserver:self forKeyPath:@"contentOffset"];
+    [self.scrollView removeObserver:self forKeyPath:@"contentSize"];
+}
+
 - (id)initWithPullType:(PullType)pullType
 {
     self = [super init];
@@ -35,7 +74,7 @@
         self.backgroundColor = [UIColor clearColor];
         self.pullType = pullType;
         self.isLoading = NO;
-
+        
         //TODO: 自定义UI布局
         self.titleLabel = [[UILabel alloc] init];
         self.titleLabel.textColor = [UIColor darkGrayColor];
@@ -44,7 +83,7 @@
         self.titleLabel.backgroundColor = [UIColor clearColor];
         self.titleLabel.opaque = YES;
         [self addSubview:self.titleLabel];
-
+        
         self.aiView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         self.aiView.hidesWhenStopped = YES;
         [self addSubview:self.aiView];
@@ -59,17 +98,11 @@
     NSAssert([scrollView isKindOfClass:[UIScrollView class]], @"必须是UIScrollView或其子类");
     self.scrollView = scrollView;
     [self.scrollView addSubview:self];
-
-    [self.scrollView addObserver:self
-                     forKeyPath:@"contentOffset"
-                        options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld
-                        context:NULL];
-    [self.scrollView addObserver:self
-                     forKeyPath:@"contentSize"
-                        options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld
-                        context:NULL];
-
+    //开始监听移动
+    [self startDataHandle];
 }
+
+
 
 #pragma mark - 刷新Frame时,子控件改变布局
 - (void)setFrame:(CGRect)frame
@@ -77,13 +110,13 @@
     [super setFrame:frame];
     if (self.pullType == PullType_Header)
     {
-        self.titleLabel.frame = CGRectMake(120, frame.size.height-25, 100, 20);
-        self.aiView.frame = CGRectMake(120, frame.size.height-15, 0, 0);
+        self.titleLabel.frame = CGRectMake(self.scrollView.frame.size.width*0.5-100*0.5, frame.size.height-25, 100, 20);
+        self.aiView.frame = CGRectMake(self.scrollView.frame.size.width*0.5-100*0.5-50, frame.size.height-15, 0, 0);
     }
     else
     {
-        self.titleLabel.frame = CGRectMake(120, 10, 100, 20);
-        self.aiView.frame = CGRectMake(120, 20, 0, 0);
+        self.titleLabel.frame = CGRectMake(self.scrollView.frame.size.width*0.5-100*0.5, 10, 100, 20);
+        self.aiView.frame = CGRectMake(self.scrollView.frame.size.width*0.5-100*0.5-50, 20, 0, 0);
     }
 }
 
@@ -106,7 +139,7 @@
                 {
                     [self.aiView startAnimating];
                     self.isLoading = YES;
-                    self.titleLabel.text = LOADING;
+                    self.titleLabel.text = (self.loadingTitle.length)?self.loadingTitle:LOADING;
                     if (self.delegate && [self.delegate respondsToSelector:@selector(didBeginLoadData:)])
                     {
                         [self.delegate didBeginLoadData:self];
@@ -114,7 +147,7 @@
                     [UIView animateWithDuration:0.25f animations:^{
                         if (self.pullType==PullType_Header)
                         {
-                            self.scrollView.contentInset = UIEdgeInsetsMake(OFFSETHEIGHT,
+                            self.scrollView.contentInset = UIEdgeInsetsMake(LOADINGHEIGHT,
                                                                             self.scrollView.contentInset.left,
                                                                             self.scrollView.contentInset.bottom,
                                                                             self.scrollView.contentInset.right);
@@ -124,21 +157,21 @@
                 //在可请求得距离,未松手
                 else
                 {
-                    self.titleLabel.text = RELEASE;
+                    self.titleLabel.text = (self.willLoadTitle.length)?self.willLoadTitle:RELEASE;
                 }
             }
             //距离完全不够
             else
             {
-                self.titleLabel.text = PULLDOWN;
+                self.titleLabel.text = (self.normalTitle.length)?self.normalTitle:PULLDOWN;
             }
         }
         else
         {
-            self.titleLabel.text = LOADING;
+            self.titleLabel.text = (self.loadingTitle.length)?self.loadingTitle:LOADING;
         }
     }
-
+    
     //TODO: 上拉加载
     if (self.pullType==PullType_Footer)
     {
@@ -157,7 +190,7 @@
             {
                 [self.aiView startAnimating];
                 self.isLoading = YES;
-                self.titleLabel.text = LOADING;
+                self.titleLabel.text = (self.loadingTitle.length)?self.loadingTitle:LOADING;
                 if (self.delegate && [self.delegate respondsToSelector:@selector(didBeginLoadData:)])
                 {
                     [self.delegate didBeginLoadData:self];
@@ -166,9 +199,9 @@
                     if (self.pullType==PullType_Footer)
                     {
                         self.scrollView.contentInset = UIEdgeInsetsMake(self.scrollView.contentInset.top,
-                                                                       self.scrollView.contentInset.left,
-                                                                       OFFSETHEIGHT,
-                                                                       self.scrollView.contentInset.right);
+                                                                        self.scrollView.contentInset.left,
+                                                                        LOADINGHEIGHT,
+                                                                        self.scrollView.contentInset.right);
                     }
                 }];
             }
@@ -176,17 +209,17 @@
             else if (oldPoint.y+self.scrollView.bounds.size.height>self.scrollView.contentSize.height+OFFSETHEIGHT &&
                      self.scrollView.tracking)
             {
-                self.titleLabel.text = RELEASE;
+                self.titleLabel.text = (self.willLoadTitle.length)?self.willLoadTitle:RELEASE;
             }
             //距离完全不够
             else
             {
-                self.titleLabel.text = PULLUP;
+                self.titleLabel.text = (self.normalTitle.length)?self.normalTitle:PULLUP;
             }
         }
         else
         {
-            self.titleLabel.text = LOADING;
+            self.titleLabel.text = (self.loadingTitle.length)?self.loadingTitle:LOADING;
         }
     }
 }
@@ -202,16 +235,16 @@
             if (self.pullType==PullType_Header)
             {
                 self.scrollView.contentInset = UIEdgeInsetsMake(0,
-                                                               self.scrollView.contentInset.left,
-                                                               self.scrollView.contentInset.bottom,
-                                                               self.scrollView.contentInset.right);
+                                                                self.scrollView.contentInset.left,
+                                                                self.scrollView.contentInset.bottom,
+                                                                self.scrollView.contentInset.right);
             }
             if (self.pullType==PullType_Footer)
             {
                 self.scrollView.contentInset = UIEdgeInsetsMake(self.scrollView.contentInset.top,
-                                                               self.scrollView.contentInset.left,
-                                                               0,
-                                                               self.scrollView.contentInset.right);
+                                                                self.scrollView.contentInset.left,
+                                                                0,
+                                                                self.scrollView.contentInset.right);
             }
         }];
     });
