@@ -97,15 +97,13 @@ PullRefreshViewDelegate>
 }
 
 
-#pragma mark - 开始加载
+#pragma mark - PullRefreshViewDelegate
 - (void)didBeginLoadData:(PullRefreshView*)pullRefreshView
 {
-    //模拟刷新数据
     if (pullRefreshView.pullType==PullType_Header)
     {
         [self loadData];
     }
-    //模拟刷新数据
     if (pullRefreshView.pullType==PullType_Footer)
     {
         [self addData];

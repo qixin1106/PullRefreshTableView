@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9964ED251A3FEC6300C6CAF9 /* down.gif in Resources */ = {isa = PBXBuildFile; fileRef = 9964ED231A3FEC6300C6CAF9 /* down.gif */; };
+		9964ED261A3FEC6300C6CAF9 /* up.gif in Resources */ = {isa = PBXBuildFile; fileRef = 9964ED241A3FEC6300C6CAF9 /* up.gif */; };
 		D274E64A19A19F2C00174D9A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D274E64919A19F2C00174D9A /* Foundation.framework */; };
 		D274E64C19A19F2C00174D9A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D274E64B19A19F2C00174D9A /* CoreGraphics.framework */; };
 		D274E64E19A19F2C00174D9A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D274E64D19A19F2C00174D9A /* UIKit.framework */; };
@@ -38,6 +40,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9964ED231A3FEC6300C6CAF9 /* down.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = down.gif; sourceTree = "<group>"; };
+		9964ED241A3FEC6300C6CAF9 /* up.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = up.gif; sourceTree = "<group>"; };
 		D274E64619A19F2C00174D9A /* RefreshTableView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RefreshTableView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D274E64919A19F2C00174D9A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D274E64B19A19F2C00174D9A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -94,6 +98,8 @@
 		D274E63D19A19F2C00174D9A = {
 			isa = PBXGroup;
 			children = (
+				9964ED231A3FEC6300C6CAF9 /* down.gif */,
+				9964ED241A3FEC6300C6CAF9 /* up.gif */,
 				D282731E19A3522C0050FF24 /* README.md */,
 				D274E64F19A19F2C00174D9A /* RefreshTableView */,
 				D274E66E19A19F2C00174D9A /* RefreshTableViewTests */,
@@ -257,8 +263,10 @@
 			files = (
 				D274E66219A19F2C00174D9A /* Images.xcassets in Resources */,
 				D274E65419A19F2C00174D9A /* InfoPlist.strings in Resources */,
+				9964ED251A3FEC6300C6CAF9 /* down.gif in Resources */,
 				D282731F19A3522C0050FF24 /* README.md in Resources */,
 				D274E65D19A19F2C00174D9A /* Main.storyboard in Resources */,
+				9964ED261A3FEC6300C6CAF9 /* up.gif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
