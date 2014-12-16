@@ -44,3 +44,11 @@ PullRefreshTableView
     [self.pullDownView didLoadFinish];
     [self.pullUpView didLoadFinish];
 
+
+
+### 新增加方法
+
+    //如果是最后一页数据,则调此方法,可现实"全部加载完成"并,关闭KVO监听方法.
+    - (void)finishDataHandle;
+    //打开KVO监听方法,每次移动会自己替换文字
+    - (void)startDataHandle;
