@@ -2,6 +2,15 @@ PullRefreshTableView
 ===================
 
 
+演示效果:
+
+### 下拉刷新
+![image](https://raw.githubusercontent.com/qixin1106/PullRefreshTableView/master/up.gif)
+
+### 上拉加载更多
+![image](https://raw.githubusercontent.com/qixin1106/PullRefreshTableView/master/down.gif)
+
+
 ### 初始化
     
     //下拉刷新
